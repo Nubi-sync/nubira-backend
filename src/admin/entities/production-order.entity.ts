@@ -13,7 +13,7 @@ export class ProductionOrder {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ unique: true })
+  @Column()
   article_no: string;
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })

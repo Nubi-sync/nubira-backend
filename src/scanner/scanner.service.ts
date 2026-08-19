@@ -59,7 +59,7 @@ export class ScannerService {
         if (bundle.status !== BundleStatus.IN_STORE) {
           throw new BadRequestException('Bundle is not IN_STORE');
         }
-        if (bundle.productionOrder.assignedLineman?.id !== user.id) {
+        if (bundle.productionOrder?.assignedLineman?.id !== user.id) {
           throw new BadRequestException('Bundle not assigned to you');
         }
         
@@ -78,7 +78,8 @@ export class ScannerService {
         await manager.save(bundle);
 
         // Auto-credit wage
-        const wageAmount = bundle.quantity * bundle.productionOrder.piece_rate;
+        const pieceRate = bundle.productionOrder?.piece_rate || 0;
+        const wageAmount = bundle.quantity * pieceRate;
         const wage = manager.create(WageLedger, {
           lineman: user,
           bundle: bundle,
@@ -118,7 +119,8 @@ export class ScannerService {
         user,
         'Bundle',
         bundle.id,
-        { barcode, context }
+        { barcode, context },
+        manager
       );
     });
   }

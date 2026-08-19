@@ -25,7 +25,10 @@ export class UsersService implements OnModuleInit {
   }
 
   async findByUsername(username: string): Promise<User | null> {
-    return this.usersRepository.findOne({ where: { username } });
+    return this.usersRepository.createQueryBuilder('user')
+      .where('user.username = :username', { username })
+      .addSelect('user.password')
+      .getOne();
   }
 
   async create(userData: Partial<User>): Promise<User> {
