@@ -47,4 +47,25 @@ export class UsersService implements OnModuleInit {
   async findAllByRole(role: UserRole): Promise<User[]> {
     return this.usersRepository.find({ where: { role } });
   }
+
+  async findAll(): Promise<User[]> {
+    return this.usersRepository.find({
+      order: { created_at: 'DESC' },
+    });
+  }
+
+  async update(id: string, updateData: Partial<User>): Promise<User> {
+    const user = await this.findById(id);
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    if (updateData.password) {
+      const salt = await bcrypt.genSalt();
+      updateData.password = await bcrypt.hash(updateData.password, salt);
+    }
+
+    Object.assign(user, updateData);
+    return this.usersRepository.save(user);
+  }
 }
