@@ -48,7 +48,7 @@ export class AdminService {
       const bundleSize = 50;
       const numBundles = Math.ceil(quantity / bundleSize);
       
-      const bundles = [];
+      const bundles: Bundle[] = [];
       for (let i = 0; i < numBundles; i++) {
         const bQty = (i === numBundles - 1 && quantity % bundleSize !== 0) 
             ? quantity % bundleSize 
