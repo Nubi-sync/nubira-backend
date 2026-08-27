@@ -27,6 +27,7 @@ import { AuditModule } from './audit/audit.module';
         database: configService.get<string>('DB_NAME'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
         synchronize: true, // Auto-create tables (dev only)
+        ssl: configService.get<string>('DB_SSL') === 'true' || configService.get<string>('DB_HOST')?.includes('supabase') || configService.get<string>('DB_HOST')?.includes('pooler') ? { rejectUnauthorized: false } : false,
       }),
       inject: [ConfigService],
     }),
