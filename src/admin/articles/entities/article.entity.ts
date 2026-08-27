@@ -5,12 +5,26 @@ export class Article {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ unique: true })
-  name: string;
+  @Column({ nullable: true })
+  art_no: string;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2 })
-  defaultPieceRate: number;
+  @Column({ nullable: true })
+  description?: string;
 
-  @CreateDateColumn()
-  createdAt: Date;
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0, nullable: true })
+  piece_rate?: number;
+
+  @Column({ default: true, nullable: true })
+  is_active?: boolean;
+
+  @CreateDateColumn({ nullable: true })
+  created_at?: Date;
+
+  get name(): string {
+    return this.art_no || 'Garment';
+  }
+
+  get defaultPieceRate(): number {
+    return Number(this.piece_rate) || 0;
+  }
 }

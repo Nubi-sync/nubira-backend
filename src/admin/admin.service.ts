@@ -129,7 +129,7 @@ export class AdminService {
     
     return {
       linemen: linemen.map(l => ({ id: l.id, name: l.name })),
-      articles: articles.map(a => ({ id: a.id, name: a.name, rate: a.defaultPieceRate })),
+      articles: articles.map(a => ({ id: a.id, name: a.art_no || a.name || "Article", rate: Number(a.piece_rate || a.defaultPieceRate || 0) })),
     };
   }
 }

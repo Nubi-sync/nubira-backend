@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
 
 export enum UserRole {
   ADMIN = 'ADMIN',
@@ -8,7 +8,7 @@ export enum UserRole {
   DISPATCH = 'DISPATCH',
 }
 
-@Entity('users')
+@Entity('profiles')
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -16,25 +16,21 @@ export class User {
   @Column({ unique: true })
   username: string;
 
-  @Column({ select: false })
-  password?: string; // Storing hashed password
+  @Column({ nullable: true, select: false })
+  password?: string;
 
-  @Column()
-  name: string;
+  @Column({ nullable: true })
+  name?: string;
 
   @Column({
-    type: 'enum',
-    enum: UserRole,
+    type: 'text',
     default: UserRole.LINEMAN,
   })
   role: UserRole;
 
   @Column({ nullable: true })
-  line_no: string; // Only for Lineman role
+  line_no?: string;
 
-  @CreateDateColumn()
-  created_at: Date;
-
-  @UpdateDateColumn()
-  updated_at: Date;
+  @CreateDateColumn({ nullable: true })
+  created_at?: Date;
 }

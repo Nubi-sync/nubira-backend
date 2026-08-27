@@ -11,16 +11,20 @@ export class UsersService implements OnModuleInit {
     private usersRepository: Repository<User>,
   ) {}
 
-  async onModuleInit() {
-    const adminExists = await this.findByUsername('admin');
-    if (!adminExists) {
-      await this.create({
-        username: 'admin',
-        password: 'password', // will be hashed in create()
-        name: 'Super Admin',
-        role: UserRole.ADMIN,
-      });
-      console.log('✅ Default Admin user created: admin / password');
+    async onModuleInit() {
+    try {
+      const adminExists = await this.findByUsername('admin');
+      if (!adminExists) {
+        await this.create({
+          username: 'admin',
+          password: 'password',
+          name: 'Super Admin',
+          role: UserRole.ADMIN,
+        });
+        console.log('✅ Default Admin user initialized');
+      }
+    } catch (e) {
+      console.log('User service startup check:', (e as any)?.message || 'ready');
     }
   }
 
