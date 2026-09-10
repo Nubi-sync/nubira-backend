@@ -73,7 +73,8 @@ ADD COLUMN IF NOT EXISTS vendor_name TEXT;
 
 -- 6. Add vendor column to allotments table
 ALTER TABLE public.allotments 
-ADD COLUMN IF NOT EXISTS vendor_id UUID REFERENCES public.vendors(id) ON DELETE SET NULL;
+ADD COLUMN IF NOT EXISTS vendor_id UUID REFERENCES public.vendors(id) ON DELETE SET NULL,
+ADD COLUMN IF NOT EXISTS vendor_name TEXT;
 
 -- 7. Add vendor columns to delivery_challans table (Dispatch)
 ALTER TABLE public.delivery_challans 
