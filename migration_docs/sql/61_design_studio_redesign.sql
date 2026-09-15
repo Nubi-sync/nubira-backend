@@ -3,20 +3,35 @@
 -- 3-Tier Verification Pipeline (Designer -> Provisional Head -> Super Admin -> Tech Pack)
 -- =============================================================================
 
--- 1. Design Team Members (PH assigns designers to their team)
+-- 1. Design Team Members (PH assigns creative designers with 10-digit phone login)
 CREATE TABLE IF NOT EXISTS design_team_members (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   ph_user_id UUID NOT NULL,              -- Provisional Head who added this member
-  designer_user_id UUID,                 -- Supabase auth user id (optional / linked)
+  designer_user_id UUID,                 -- Supabase auth user id (linked auth.users)
   designer_name TEXT NOT NULL,
-  designer_email TEXT NOT NULL,
-  designer_phone TEXT,
+  phone_number TEXT,                     -- 10-digit mobile number e.g. '8010993993'
+  username TEXT,                         -- creative unique username e.g. 'rahul_nubira'
+  designer_email TEXT,                   -- internal auth email e.g. '8010993993@designer.nubira.local'
+  designer_phone TEXT,                   -- alias for phone_number
+  password_hash TEXT,                    -- credential storage
   company_name TEXT NOT NULL DEFAULT 'Nubira Creation',
   status TEXT NOT NULL DEFAULT 'ACTIVE' CHECK (status IN ('ACTIVE', 'SUSPENDED', 'REMOVED')),
   created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW(),
-  CONSTRAINT uq_design_team_member UNIQUE(company_name, designer_email)
+  updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- Ensure all columns exist if table was created in an earlier partial run
+ALTER TABLE design_team_members
+  ADD COLUMN IF NOT EXISTS phone_number TEXT,
+  ADD COLUMN IF NOT EXISTS username TEXT,
+  ADD COLUMN IF NOT EXISTS designer_email TEXT,
+  ADD COLUMN IF NOT EXISTS designer_phone TEXT,
+  ADD COLUMN IF NOT EXISTS password_hash TEXT,
+  ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'ACTIVE';
+
+-- Ensure phone and username uniqueness per company
+CREATE UNIQUE INDEX IF NOT EXISTS uq_design_team_member_phone ON design_team_members(company_name, phone_number) WHERE phone_number IS NOT NULL;
+CREATE UNIQUE INDEX IF NOT EXISTS uq_design_team_member_username ON design_team_members(company_name, username) WHERE username IS NOT NULL;
 
 -- 2. Design Briefs (PH allocates work to designers)
 CREATE TABLE IF NOT EXISTS design_briefs (
@@ -199,17 +214,39 @@ ALTER TABLE design_bom_component_codes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE design_garment_templates ENABLE ROW LEVEL SECURITY;
 
 -- Allow authenticated users to perform operations (tenant isolation handled at service layer & company_name)
+DROP POLICY IF EXISTS "Allow all access to design_team_members for authenticated" ON design_team_members;
 CREATE POLICY "Allow all access to design_team_members for authenticated" ON design_team_members FOR ALL TO authenticated USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow all access to design_briefs for authenticated" ON design_briefs;
 CREATE POLICY "Allow all access to design_briefs for authenticated" ON design_briefs FOR ALL TO authenticated USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow all access to design_submissions for authenticated" ON design_submissions;
 CREATE POLICY "Allow all access to design_submissions for authenticated" ON design_submissions FOR ALL TO authenticated USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow all access to design_body_part_codes for authenticated" ON design_body_part_codes;
 CREATE POLICY "Allow all access to design_body_part_codes for authenticated" ON design_body_part_codes FOR ALL TO authenticated USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow all access to design_bom_component_codes for authenticated" ON design_bom_component_codes;
 CREATE POLICY "Allow all access to design_bom_component_codes for authenticated" ON design_bom_component_codes FOR ALL TO authenticated USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow all access to design_garment_templates for authenticated" ON design_garment_templates;
 CREATE POLICY "Allow all access to design_garment_templates for authenticated" ON design_garment_templates FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- Allow anon access for read/write if using anon key in development
+DROP POLICY IF EXISTS "Allow anon access to design_team_members" ON design_team_members;
 CREATE POLICY "Allow anon access to design_team_members" ON design_team_members FOR ALL TO anon USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow anon access to design_briefs" ON design_briefs;
 CREATE POLICY "Allow anon access to design_briefs" ON design_briefs FOR ALL TO anon USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow anon access to design_submissions" ON design_submissions;
 CREATE POLICY "Allow anon access to design_submissions" ON design_submissions FOR ALL TO anon USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow anon access to design_body_part_codes" ON design_body_part_codes;
 CREATE POLICY "Allow anon access to design_body_part_codes" ON design_body_part_codes FOR ALL TO anon USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow anon access to design_bom_component_codes" ON design_bom_component_codes;
 CREATE POLICY "Allow anon access to design_bom_component_codes" ON design_bom_component_codes FOR ALL TO anon USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow anon access to design_garment_templates" ON design_garment_templates;
 CREATE POLICY "Allow anon access to design_garment_templates" ON design_garment_templates FOR ALL TO anon USING (true) WITH CHECK (true);
