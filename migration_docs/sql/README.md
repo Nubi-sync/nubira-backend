@@ -21,6 +21,10 @@ Har file run karne ke baad Table Editor mein check karo ki table bani ya nahi.
 | 12 | `12_enable_rls.sql` | RLS ON + helper function | Har table ke paas shield 🛡️ icon aayega |
 | 13 | `13_rls_policies.sql` | Access rules | Table → Policies tab mein rules dikhenge |
 | 14 | `14_first_admin_user.sql` | Admin profile entry | profiles table mein "admin" row dikhegi |
+| ... | `...` | Subsequent feature migrations | See individual migration scripts |
+| 67 | `67_buyers_contracts_and_module_vendors.sql` | 12 Module vendors & buyer master | module_vendors table |
+| 68 | `68_fix_security_definer_views.sql` | Security Invoker Views fix | Security advisor alerts |
+| 69 | `69_executive_dashboard_and_reports_optimization.sql` | Analytics B-Tree Indexes & Views | High-speed dashboard queries |
 
 ## Important Notes:
 - **Order matter karta hai!** Pehle tables banao (1-11), fir RLS (12-13), fir admin (14)
