@@ -74,7 +74,7 @@ FOR EACH ROW
 EXECUTE FUNCTION public.fn_sync_embroidery_bundle_custody();
 
 -- 3. Executive Division 05 Floor KPIs Analytical View
-CREATE OR REPLACE VIEW public.view_embroidery_floor_kpis AS
+CREATE OR REPLACE VIEW public.view_embroidery_floor_kpis WITH (security_invoker = true) AS
 SELECT
     COUNT(DISTINCT m.id) AS total_machines,
     COUNT(DISTINCT CASE WHEN m.is_active = TRUE THEN m.id END) AS active_machines,

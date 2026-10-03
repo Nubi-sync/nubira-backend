@@ -194,7 +194,7 @@ BEFORE INSERT OR UPDATE ON public.printing_curing_oven_logs
 FOR EACH ROW
 EXECUTE FUNCTION public.fn_classify_curing_oven_status();
 
-CREATE OR REPLACE VIEW public.view_printing_floor_kpis AS
+CREATE OR REPLACE VIEW public.view_printing_floor_kpis WITH (security_invoker = true) AS
 SELECT
     COUNT(DISTINCT so.id) AS total_strike_offs,
     COUNT(DISTINCT CASE WHEN so.approval_status = 'APPROVED' THEN so.id END) AS approved_strike_offs,

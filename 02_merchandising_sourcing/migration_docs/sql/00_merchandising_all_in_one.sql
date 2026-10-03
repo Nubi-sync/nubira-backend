@@ -315,7 +315,7 @@ CREATE TRIGGER trg_sync_milestone_status
 
 
 -- 3. Comprehensive Financial Analytics View for Merchandising Orders
-CREATE OR REPLACE VIEW public.view_merchandising_order_economics AS
+CREATE OR REPLACE VIEW public.view_merchandising_order_economics WITH (security_invoker = true) AS
 SELECT 
     o.id AS order_id,
     o.order_number,

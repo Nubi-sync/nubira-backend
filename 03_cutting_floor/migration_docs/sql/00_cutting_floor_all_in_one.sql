@@ -338,7 +338,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- 3. Consolidated Real-Time Executive KPI View: view_cutting_floor_kpis
-CREATE OR REPLACE VIEW public.view_cutting_floor_kpis AS
+CREATE OR REPLACE VIEW public.view_cutting_floor_kpis WITH (security_invoker = true) AS
 SELECT
     COUNT(DISTINCT cls.id) AS total_lay_sheets,
     COUNT(DISTINCT cls.id) FILTER (WHERE cls.status IN ('SPREADING', 'READY_FOR_CUT', 'CUTTING')) AS active_lay_sheets_wip,
