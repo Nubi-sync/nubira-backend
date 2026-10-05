@@ -51,7 +51,7 @@ UPDATE public.merchandising_orders o
 UPDATE public.merchandising_active_buyers b
   SET company_name = tp.company_name
   FROM public.design_tech_packs tp
-  WHERE (b.linked_article_id = tp.id::text OR b.linked_article_number = tp.style_number)
+  WHERE (b.linked_article_id::text = tp.id::text OR b.linked_article_number = tp.style_number)
     AND tp.company_name IS NOT NULL
     AND (b.company_name IS NULL OR b.company_name != tp.company_name);
 
@@ -75,23 +75,23 @@ UPDATE public.merchandising_orders
 
 UPDATE public.merchandising_active_buyers 
   SET company_name = 'Demo Industries' 
-  WHERE buyer_name IN ('Hollypop', 'ollywood')
+  WHERE buyer_name ILIKE ANY (ARRAY['%Hollypop%', '%ollywood%'])
      OR linked_article_number IN ('DEMO-101-03', 'DEMO-102');
 
 UPDATE public.brands 
   SET company_name = 'Demo Industries' 
-  WHERE brand_name IN ('Hollypop', 'ollywood');
+  WHERE brand_name ILIKE 'Hollypop' OR brand_name ILIKE 'ollywood';
 
 -- Point Demo Tech Packs to their genuine buyer brands
 UPDATE public.design_tech_packs tp
   SET brand_id = br.id
   FROM public.brands br
-  WHERE tp.style_number = 'DEMO-101-03' AND br.brand_name = 'Hollypop';
+  WHERE tp.style_number = 'DEMO-101-03' AND br.brand_name ILIKE 'Hollypop';
 
 UPDATE public.design_tech_packs tp
   SET brand_id = br.id
   FROM public.brands br
-  WHERE tp.style_number = 'DEMO-102' AND br.brand_name = 'ollywood';
+  WHERE tp.style_number = 'DEMO-102' AND br.brand_name ILIKE 'ollywood';
 
 -- Purge legacy unused dummy seed brands from early development
 DELETE FROM public.brands 
